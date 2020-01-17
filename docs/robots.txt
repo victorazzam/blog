@@ -61,4 +61,4 @@ Disallow: /
 User-agent: ZoominfoBot
 Disallow: /
 
-Sitemap: http://51.15.98.225:80/sitemap.xml
+Sitemap: https://wftc.xyz:80/sitemap.xml
