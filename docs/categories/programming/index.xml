@@ -1,26 +1,2 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Programming on Wanted For Thought Crime</title>
-    <link>https://wftc.xyz/categories/programming/</link>
-    <description>Recent content in Programming on Wanted For Thought Crime</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Wed, 22 Jan 2020 00:06:09 +0000</lastBuildDate>
-    
-	<atom:link href="https://wftc.xyz/categories/programming/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>Solving a cryptographic challenge in Rust</title>
-      <link>https://wftc.xyz/2020/01/crypto-rust/</link>
-      <pubDate>Wed, 22 Jan 2020 00:06:09 +0000</pubDate>
-      
-      <guid>https://wftc.xyz/2020/01/crypto-rust/</guid>
-      <description>Howdy Thought I&#39;d kick things off by setting the tone for the rest of this blog. The front page description won&#39;t do it justice as time passes and this nerdy diary of artless prose fills to the brim.
-Getting closer to the point This isn&#39;t to say that the blog is purely tech-based or security-related. Indeed it will be a recurring theme, largely due to how much less effort it takes to type stuff (code) and then type some more (this blog) to discuss said stuff.</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Programming on Wanted For Thought Crime</title><link>https://wftc.xyz/categories/programming/</link><description>Recent content in Programming on Wanted For Thought Crime</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Wed, 22 Jan 2020 00:06:09 +0000</lastBuildDate><atom:link href="https://wftc.xyz/categories/programming/index.xml" rel="self" type="application/rss+xml"/><item><title>Solving a cryptographic challenge in Rust</title><link>https://wftc.xyz/2020/01/crypto-rust/</link><pubDate>Wed, 22 Jan 2020 00:06:09 +0000</pubDate><guid>https://wftc.xyz/2020/01/crypto-rust/</guid><description>Howdy Thought I&amp;rsquo;d kick things off by setting the tone for the rest of this blog. The front page description won&amp;rsquo;t do it justice as time passes and this nerdy diary of artless prose fills to the brim.
+Getting closer to the point This isn&amp;rsquo;t to say that the blog is purely tech-based or security-related. Indeed it will be a recurring theme, largely due to how much less effort it takes to type stuff (code) and then type some more (this blog) to discuss said stuff.</description></item></channel></rss>

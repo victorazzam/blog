@@ -1,202 +1,104 @@
-<!DOCTYPE html>
-<html lang="en-us">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Solving a cryptographic challenge in Rust | Wanted For Thought Crime</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noodp" />
-<meta name="Description" content="A long nine-month while back, during a CTF event in Dublin City run by Zero Days Security, I was stumped by one of the questions. The challenge __Fast and Efficient__ came with a `flag.enc` file and a diagram illustrating how everything was set up.">
-<link rel="prev" href="https://wftc.xyz/2020/01/init.d/" />
-<link rel="canonical" href="https://wftc.xyz/2020/01/crypto-rust/" />
-<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Solving a cryptographic challenge in Rust"/>
-<meta name="twitter:description" content="A long nine-month while back, during a CTF event in Dublin City run by Zero Days Security, I was stumped by one of the questions. The challenge __Fast and Efficient__ came with a `flag.enc` file and a diagram illustrating how everything was set up."/>
-<script type="application/ld+json">
-    {
-    "@context": "http://schema.org",
-    "@type": "BlogPosting",
-    "headline": "Solving a cryptographic challenge in Rust",
-    "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "https:\/\/wftc.xyz\/2020\/01\/crypto-rust\/"
-    },
-    
-        "image": {
-            "@type": "ImageObject",
-            "url": "https:\/\/wftc.xyz\/cover.png",
-            "width":  800 ,
-            "height":  600 
-        },
-    
-    "genre": "posts",
-    
-    "wordcount":  1377 ,
-    "url": "https:\/\/wftc.xyz\/2020\/01\/crypto-rust\/",
-    
-        "datePublished": "2020-01-22T00:06:09\x2b00:00",
-    
-    
-        "dateModified": "2020-01-22T00:06:09\x2b00:00",
-    
-    
-        "license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.",
-    
-    
-        "publisher": {
-            "@type": "Organization",
-            "name": "WFTC",
-            "logo": {
-            "@type": "ImageObject",
-            "url": "https:\/\/wftc.xyz\/logo.png",
-            "width":  127 ,
-            "height":  40 
-            }
-        },
-    
-    
-    "description": "A long nine-month while back, during a CTF event in Dublin City run by Zero Days Security, I was stumped by one of the questions. The challenge __Fast and Efficient__ came with a `flag.enc` file and a diagram illustrating how everything was set up."
-    }
-    </script>
-<link rel="stylesheet" href="/css/style.min.css">
-<link rel="stylesheet" href="/css/lib/fontawesome-free/all.min.min.css">
-
-<link rel="stylesheet" href="/css/lib/animate/animate.min.min.css">
-
-    </head>
-    <body>
-        <script>
-            window.isDark = (window.localStorage && window.localStorage.getItem('theme')) === 'dark';
-            window.isDark && document.body.classList.add('dark-theme');
-        </script>
-        <div class="wrapper">
-            <nav class="navbar">
-    <div class="navbar-container">
-        <div class="navbar-header animated bounceIn">
-            <a href="https://wftc.xyz">Wanted For Thought Crime</a>
-        </div>
-        <div class="navbar-menu">
-            
-            
-                <a class="menu-item" href="https://wftc.xyz/posts" title="">Posts</a>
-            
-                <a class="menu-item" href="https://wftc.xyz/categories" title="">Categories</a>
-            
-                <a class="menu-item" href="https://wftc.xyz/about" title="">About</a>
-            
-            <a href="javascript:void(0);" class="theme-switch"><i class="fas fa-adjust fa-rotate-180 fa-fw"></i></a>
-        </div>
-    </div>
+<!doctype html><html lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>Solving a cryptographic challenge in Rust | Wanted For Thought Crime</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta name=Description content="A long nine-month while back, during a CTF event in Dublin City run by Zero Days Security, I was stumped by one of the questions. The challenge Fast and Efficient came with a flag.enc file and a diagram illustrating how everything was set up.">
+<link rel=prev href=https://wftc.xyz/2020/01/init.d/>
+<link rel=canonical href=https://wftc.xyz/2020/01/crypto-rust/>
+<link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/site.webmanifest>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<meta name=msapplication-TileColor content="#da532c">
+<meta name=theme-color content="#ffffff">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Solving a cryptographic challenge in Rust">
+<meta name=twitter:description content="A long nine-month while back, during a CTF event in Dublin City run by Zero Days Security, I was stumped by one of the questions. The challenge Fast and Efficient came with a flag.enc file and a diagram illustrating how everything was set up.">
+<script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Solving a cryptographic challenge in Rust","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/wftc.xyz\/2020\/01\/crypto-rust\/"},"image":{"@type":"ImageObject","url":"https:\/\/wftc.xyz\/cover.png","width":800,"height":600},"genre":"posts","wordcount":1377,"url":"https:\/\/wftc.xyz\/2020\/01\/crypto-rust\/","datePublished":"2020-01-22T00:06:09\u002b00:00","dateModified":"2020-01-22T00:06:09\u002b00:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"WFTC","logo":{"@type":"ImageObject","url":"https:\/\/wftc.xyz\/logo.png","width":127,"height":40}},"description":"A long nine-month while back, during a CTF event in Dublin City run by Zero Days Security, I was stumped by one of the questions. The challenge Fast and Efficient came with a flag.enc file and a diagram illustrating how everything was set up."}</script>
+<link rel=stylesheet href=/css/style.min.css>
+<link rel=stylesheet href=/css/lib/fontawesome-free/all.min.min.css>
+<link rel=stylesheet href=/css/lib/animate/animate.min.min.css>
+</head>
+<body>
+<script>window.isDark=(window.localStorage&&window.localStorage.getItem('theme'))==='dark',window.isDark&&document.body.classList.add('dark-theme')</script>
+<div class=wrapper>
+<nav class=navbar>
+<div class=navbar-container>
+<div class="navbar-header animated bounceIn">
+<a href=https://wftc.xyz>Wanted For Thought Crime</a>
+</div>
+<div class=navbar-menu>
+<a class=menu-item href=https://wftc.xyz/posts title>Posts</a>
+<a class=menu-item href=https://wftc.xyz/categories title>Categories</a>
+<a class=menu-item href=https://wftc.xyz/about title>About</a>
+<a href=javascript:void(0); class=theme-switch><i class="fas fa-adjust fa-rotate-180 fa-fw"></i></a>
+</div>
+</div>
 </nav>
-<nav class="navbar-mobile">
-     <div class="navbar-container">
-        <div class="navbar-header">
-            <div class="navbar-header-title animated bounceIn">
-                <a href="https://wftc.xyz">Wanted For Thought Crime</a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="navbar-menu" id="mobile-menu">
-            
-            
-                <a class="menu-item" href="https://wftc.xyz/posts" title="">Posts</a>
-            
-                <a class="menu-item" href="https://wftc.xyz/categories" title="">Categories</a>
-            
-                <a class="menu-item" href="https://wftc.xyz/about" title="">About</a>
-            
-            <a href="javascript:void(0);" class="theme-switch"><i class="fas fa-adjust fa-rotate-180 fa-fw"></i></a>
-        </div>
-    </div>
-</nav><main class="main">
-                <div class="container">
-                    
-    
-    
-    
-
-    <article class="post-warp">
-        <h1 class="post-title animated flipInX">Solving a cryptographic challenge in Rust</h1>
-
-        <div class="post-meta">
-            <div class="post-meta-main">
-                <a class="author" href="https://wftc.xyz" rel="author"><i class="fas fa-user-circle fa-fw"></i>Victor Azzam&nbsp;</a>
-                <span class="post-category">
-                        included in
-                        <i class="far fa-folder fa-fw"></i><a href="https://wftc.xyz/categories/crypto/">Crypto</a>
-                            <i class="far fa-folder fa-fw"></i><a href="https://wftc.xyz/categories/programming/">Programming</a>
-                            <i class="far fa-folder fa-fw"></i><a href="https://wftc.xyz/categories/ctf/">CTF</a>
-                            
-                    </span>
-            </div>
-            <div class="post-meta-other">
-                <i class="far fa-calendar-alt fa-fw"></i><time datetime=2020-01-22>2020-01-22</time>&nbsp;
-                <i class="fas fa-pencil-alt fa-fw"></i>about 1377 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>7 min&nbsp;</div>
-        </div>
-
-        
-
-        
-
-        <div class="post-content">
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            <a class="post-dummy-target" id="howdy"></a><h2>Howdy</h2>
-<p>Thought I'd kick things off by setting the tone for the rest of this blog. The front page description won't do it justice as time passes and this nerdy diary of artless prose fills to the brim.</p>
-<a class="post-dummy-target" id="getting-closer-to-the-point"></a><h2>Getting closer to the point</h2>
-<p>This isn't to say that the blog is purely tech-based or security-related. Indeed it will be a recurring theme, largely due to how much less effort it takes to type stuff (code) and then type some more (this blog) to discuss said stuff. But my other hobbies do plan on making an arrival here sooner rather than later. Patience, my fellow reader.</p>
-<p>With that said, like comment subscribe hit the notification bell blah blah let's get this show on the road!</p>
-<a class="post-dummy-target" id="the-point"></a><h2>The point</h2>
+<nav class=navbar-mobile>
+<div class=navbar-container>
+<div class=navbar-header>
+<div class="navbar-header-title animated bounceIn">
+<a href=https://wftc.xyz>Wanted For Thought Crime</a>
+</div>
+<div class=menu-toggle id=menu-toggle>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=navbar-menu id=mobile-menu>
+<a class=menu-item href=https://wftc.xyz/posts title>Posts</a>
+<a class=menu-item href=https://wftc.xyz/categories title>Categories</a>
+<a class=menu-item href=https://wftc.xyz/about title>About</a>
+<a href=javascript:void(0); class=theme-switch><i class="fas fa-adjust fa-rotate-180 fa-fw"></i></a>
+</div>
+</div>
+</nav><main class=main>
+<div class=container>
+<article class=post-warp>
+<h1 class="post-title animated flipInX">Solving a cryptographic challenge in Rust</h1>
+<div class=post-meta>
+<div class=post-meta-main>
+<a class=author href=https://wftc.xyz rel=author><i class="fas fa-user-circle fa-fw"></i>Victor Azzam&nbsp;</a>
+<span class=post-category>
+included in
+<i class="far fa-folder fa-fw"></i><a href=https://wftc.xyz/categories/crypto/>Crypto</a>
+<i class="far fa-folder fa-fw"></i><a href=https://wftc.xyz/categories/programming/>Programming</a>
+<i class="far fa-folder fa-fw"></i><a href=https://wftc.xyz/categories/ctf/>CTF</a>
+</span>
+</div>
+<div class=post-meta-other>
+<i class="far fa-calendar-alt fa-fw"></i><time datetime=2020-01-22>2020-01-22</time>&nbsp;
+<i class="fas fa-pencil-alt fa-fw"></i>about 1377 words&nbsp;
+<i class="far fa-clock fa-fw"></i>7 min&nbsp;</div>
+</div>
+<div class=post-content>
+<a class=post-dummy-target id=howdy></a><h2>Howdy</h2>
+<p>Thought I&rsquo;d kick things off by setting the tone for the rest of this blog. The front page description won&rsquo;t do it justice as time passes and this nerdy diary of artless prose fills to the brim.</p>
+<a class=post-dummy-target id=getting-closer-to-the-point></a><h2>Getting closer to the point</h2>
+<p>This isn&rsquo;t to say that the blog is purely tech-based or security-related. Indeed it will be a recurring theme, largely due to how much less effort it takes to type stuff (code) and then type some more (this blog) to discuss said stuff. But my other hobbies do plan on making an arrival here sooner rather than later. Patience, my fellow reader.</p>
+<p>With that said, like comment subscribe hit the notification bell blah blah let&rsquo;s get this show on the road!</p>
+<a class=post-dummy-target id=the-point></a><h2>The point</h2>
 <p>A long nine-month while back, during a CTF event in Dublin City run by Zero Days Security, I was stumped by one of the questions. The challenge <strong>Fast and Efficient</strong> came with a <code>flag.enc</code> file and a diagram illustrating how everything was set up.</p>
-<p><img src="lfsr-diagram.png" alt="LFSR diagram"></p>
-<p>It shows two LFSRs (linear feedback shift registers) of different sizes being used as a keystream for encrypting a PNG file containing the flag. But I didn't know how an LFSR worked and the internet wasn't lending me a hand. So, what now? Good question!</p>
+<p><img src=lfsr-diagram.png alt="LFSR diagram"></p>
+<p>It shows two LFSRs (linear feedback shift registers) of different sizes being used as a keystream for encrypting a PNG file containing the flag. But I didn&rsquo;t know how an LFSR worked and the internet wasn&rsquo;t lending me a hand. So, what now? Good question!</p>
 <p>Being the dumb-dumb that I was at the time, I tried looking around on GitHub to see what others have come up with to solve similar challenges, rather than actually trying to figure out what LFSRs are. To no avail. Luckily though, this problem remained unsolved for the entire duration of the competition, so my team managed to maintain our 2nd place position on the leaderboard.</p>
 <p>Fast forward six months to October of 2019 when I revisited this question. I had spent a good portion of my summer break knee-deep in programming puzzles on Codewars and learning Rust as some sort of pursuit for knowledge and presumably eventual success, so you could say I was fresh out the oven to boldly take on a previously unsolved challenge like this one.</p>
-<a class="post-dummy-target" id="understanding-the-problem"></a><h3>Understanding the problem</h3>
-<p>We have ourselves two registers, 12 and 19 bits long. What's interesting is that we don't know their starting state, and this unknown combination of ones and zeros is what makes the algorithm (supposedly) secure. Each register has two taps assigned. A tap is a bit that affects the next state of the register. For instance in this case the smaller register's 2nd and 7th bits and the larger one's 5th and 11th bits are taps.</p>
-<p>Every round the register moves all of its bits to the right, the rightmost of which is not discarded, but rather appended to the output stream. Now the empty space on the left needs to be filled. That's where the taps come in - they're put through a linear function each round, storing the output bit in the leftmost empty space of the register. The function is usually a bitwise Exclusive OR (XOR) operation, as is in this scenario.</p>
-<p><img src="lfsr-explained.gif" alt="LFSR explained"></p>
-<p>Each register cycles through eight rounds to output eight bits, also known as a byte. The two resulting bytes are added modulo 255. That's right, not 256 oddly enough. This creates one final output byte, which is said to be part of a pseudo-random keystream. When XORed with the original <code>flag.png</code> file, the encrypted <code>flag.enc</code> is formed.</p>
+<a class=post-dummy-target id=understanding-the-problem></a><h3>Understanding the problem</h3>
+<p>We have ourselves two registers, 12 and 19 bits long. What&rsquo;s interesting is that we don&rsquo;t know their starting state, and this unknown combination of ones and zeros is what makes the algorithm (supposedly) secure. Each register has two taps assigned. A tap is a bit that affects the next state of the register. For instance in this case the smaller register&rsquo;s 2nd and 7th bits and the larger one&rsquo;s 5th and 11th bits are taps.</p>
+<p>Every round the register moves all of its bits to the right, the rightmost of which is not discarded, but rather appended to the output stream. Now the empty space on the left needs to be filled. That&rsquo;s where the taps come in - they&rsquo;re put through a linear function each round, storing the output bit in the leftmost empty space of the register. The function is usually a bitwise Exclusive OR (XOR) operation, as is in this scenario.</p>
+<p><img src=lfsr-explained.gif alt="LFSR explained"></p>
+<p>Each register cycles through eight rounds to output eight bits, also known as a byte. The two resulting bytes are added modulo 255. That&rsquo;s right, not 256 oddly enough. This creates one final output byte, which is said to be part of a pseudo-random keystream. When XORed with the original <code>flag.png</code> file, the encrypted <code>flag.enc</code> is formed.</p>
 <p>Our goal is to find out the seed value (starting position) of both registers, thus revealing the keystream and enabling the decryption of the flag file.</p>
-<p>The &ldquo;mod 255&rdquo; part initially threw me off; it led me down a path of sleepless nights and fruitless attempts at correcting the challenge author's &ldquo;mistake&rdquo; that was later revealed as an anti-plaigiarism technique. Worked wonders, didn't it?</p>
-<a class="post-dummy-target" id="finding-the-right-approach"></a><h3>Finding the right approach</h3>
-<p>So anyway, before this turns into a tirade, I haphazardly put together a Python script to try and solve this dilemma, not realising how incredibly long it would take to loop over multiple highly abstracted operations for&hellip; hold on lemme do the maf 2^(12+19) = 2^31 = 2,147,483,648 &hellip;over 2 billion times! Sweet mother of&hellip; Python is certainly not the name of the game for this kinda job.</p>
-<p>To the rescue comes my new friend Rust. I was ecstatic to finally put it to use, justifying all the procrastination and self-idulgence that I'd sacrificed to learn it over the summer. This was the moment to shine. Time to plot.</p>
-<p><img src="a-few-moments-later.jpg" alt="A few moments later&hellip;"></p>
-<a class="post-dummy-target" id="plan-of-action"></a><h3>Plan of action</h3>
+<p>The &ldquo;mod 255&rdquo; part initially threw me off; it led me down a path of sleepless nights and fruitless attempts at correcting the challenge author&rsquo;s &ldquo;mistake&rdquo; that was later revealed as an anti-plaigiarism technique. Worked wonders, didn&rsquo;t it?</p>
+<a class=post-dummy-target id=finding-the-right-approach></a><h3>Finding the right approach</h3>
+<p>So anyway, before this turns into a tirade, I haphazardly put together a Python script to try and solve this dilemma, not realising how incredibly long it would take to loop over multiple highly abstracted operations for&mldr; hold on lemme do the maf 2^(12+19) = 2^31 = 2,147,483,648 &mldr;over 2 billion times! Sweet mother of&mldr; Python is certainly not the name of the game for this kinda job.</p>
+<p>To the rescue comes my new friend Rust. I was ecstatic to finally put it to use, justifying all the procrastination and self-idulgence that I&rsquo;d sacrificed to learn it over the summer. This was the moment to shine. Time to plot.</p>
+<p><img src=a-few-moments-later.jpg alt="A few moments later&mldr;"></p>
+<a class=post-dummy-target id=plan-of-action></a><h3>Plan of action</h3>
 <ol>
 <li>Set up 2 registers that match the criteria in the challenge diagram.</li>
 <li>Loop over every possible seed value (starting point) of both registers.</li>
@@ -221,441 +123,304 @@
 </li>
 <li>If four bytes are successfully decrypted, try the whole <code>flag.enc</code> file.</li>
 </ol>
-<a class="post-dummy-target" id="execution-time-baby"></a><h3>Execution time baby!</h3>
-<p>Time flies when you're programming, and in my case most of it was <a href="https://xkcd.com/303">compilation time</a> as I sipped on my coffee and tweaked tad bits of code while the <a href="https://github.com/rust-lang/rust/labels/I-compiletime">infamously sluggish</a> compiler was running, in an attempt to up the efficiency factor by a couple notches. What a mouthful!</p>
-<p>Long story short, I've just about had it with these unannounced peculiarities. It turns out that the specific implementation for LFSRs employed by this challenge discarded the first output bit. Thinking back to the competition, how was anyone expected to figure out this random quirk within 7 hours? Never mind the craze-filled vibe that filled the already cramped space as people ran about looking to get a decent LTE signal, or queueing for their 2 free team pizzas, all while another 50+ challenges also needed attention. Fun times :P</p>
-<p>Eventually it came down to guessing and trying out of the ordinary things. Sometimes you just gotta have time, patience and a decent CPU, along with a hearty meal and a YouTube playlist to distract you from the dreadful compiler errors. Rustc knows that I'm kidding of course!</p>
-<p>After grieving over all the time I lost, and over the time I spent grieving, and then some&hellip; I eventually came to a <em>solución muy eficiente</em> and compiled it with Rust's superb optimisations. This resulted in code that brute forced over 2.1 billion combinations of bits in less than 30 seconds on my machine. Consistently.</p>
-<p><img src="lfsr-timing.png" alt="Timed results"></p>
-<p>Pretty neat, huh? Here's the outcome:</p>
-<p><img src="lfsr.png" alt="Flag"></p>
-<a class="post-dummy-target" id="whaa-whaa-just-give-me-the-code-already"></a><h3>&ldquo;Whaa whaa just give me the code already&rdquo;</h3>
-<p>Alright ya godforsaken beggars, the solution in its full glory, also found on my GitHub page <a href="https://github.com/victorazzam/stash/tree/master/Challenges/ZeroDays%202019/Fast%20and%20Efficient">with the rest of the files</a>:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">  1
-</span><span class="lnt">  2
-</span><span class="lnt">  3
-</span><span class="lnt">  4
-</span><span class="lnt">  5
-</span><span class="lnt">  6
-</span><span class="lnt">  7
-</span><span class="lnt">  8
-</span><span class="lnt">  9
-</span><span class="lnt"> 10
-</span><span class="lnt"> 11
-</span><span class="lnt"> 12
-</span><span class="lnt"> 13
-</span><span class="lnt"> 14
-</span><span class="lnt"> 15
-</span><span class="lnt"> 16
-</span><span class="lnt"> 17
-</span><span class="lnt"> 18
-</span><span class="lnt"> 19
-</span><span class="lnt"> 20
-</span><span class="lnt"> 21
-</span><span class="lnt"> 22
-</span><span class="lnt"> 23
-</span><span class="lnt"> 24
-</span><span class="lnt"> 25
-</span><span class="lnt"> 26
-</span><span class="lnt"> 27
-</span><span class="lnt"> 28
-</span><span class="lnt"> 29
-</span><span class="lnt"> 30
-</span><span class="lnt"> 31
-</span><span class="lnt"> 32
-</span><span class="lnt"> 33
-</span><span class="lnt"> 34
-</span><span class="lnt"> 35
-</span><span class="lnt"> 36
-</span><span class="lnt"> 37
-</span><span class="lnt"> 38
-</span><span class="lnt"> 39
-</span><span class="lnt"> 40
-</span><span class="lnt"> 41
-</span><span class="lnt"> 42
-</span><span class="lnt"> 43
-</span><span class="lnt"> 44
-</span><span class="lnt"> 45
-</span><span class="lnt"> 46
-</span><span class="lnt"> 47
-</span><span class="lnt"> 48
-</span><span class="lnt"> 49
-</span><span class="lnt"> 50
-</span><span class="lnt"> 51
-</span><span class="lnt"> 52
-</span><span class="lnt"> 53
-</span><span class="lnt"> 54
-</span><span class="lnt"> 55
-</span><span class="lnt"> 56
-</span><span class="lnt"> 57
-</span><span class="lnt"> 58
-</span><span class="lnt"> 59
-</span><span class="lnt"> 60
-</span><span class="lnt"> 61
-</span><span class="lnt"> 62
-</span><span class="lnt"> 63
-</span><span class="lnt"> 64
-</span><span class="lnt"> 65
-</span><span class="lnt"> 66
-</span><span class="lnt"> 67
-</span><span class="lnt"> 68
-</span><span class="lnt"> 69
-</span><span class="lnt"> 70
-</span><span class="lnt"> 71
-</span><span class="lnt"> 72
-</span><span class="lnt"> 73
-</span><span class="lnt"> 74
-</span><span class="lnt"> 75
-</span><span class="lnt"> 76
-</span><span class="lnt"> 77
-</span><span class="lnt"> 78
-</span><span class="lnt"> 79
-</span><span class="lnt"> 80
-</span><span class="lnt"> 81
-</span><span class="lnt"> 82
-</span><span class="lnt"> 83
-</span><span class="lnt"> 84
-</span><span class="lnt"> 85
-</span><span class="lnt"> 86
-</span><span class="lnt"> 87
-</span><span class="lnt"> 88
-</span><span class="lnt"> 89
-</span><span class="lnt"> 90
-</span><span class="lnt"> 91
-</span><span class="lnt"> 92
-</span><span class="lnt"> 93
-</span><span class="lnt"> 94
-</span><span class="lnt"> 95
-</span><span class="lnt"> 96
-</span><span class="lnt"> 97
-</span><span class="lnt"> 98
-</span><span class="lnt"> 99
-</span><span class="lnt">100
-</span><span class="lnt">101
-</span><span class="lnt">102
-</span><span class="lnt">103
-</span><span class="lnt">104
-</span><span class="lnt">105
-</span><span class="lnt">106
-</span><span class="lnt">107
-</span><span class="lnt">108
-</span><span class="lnt">109
-</span><span class="lnt">110
+<a class=post-dummy-target id=execution-time-baby></a><h3>Execution time baby!</h3>
+<p>Time flies when you&rsquo;re programming, and in my case most of it was <a href=https://xkcd.com/303>compilation time</a> as I sipped on my coffee and tweaked tad bits of code while the <a href=https://github.com/rust-lang/rust/labels/I-compiletime>infamously sluggish</a> compiler was running, in an attempt to up the efficiency factor by a couple notches. What a mouthful!</p>
+<p>Long story short, I&rsquo;ve just about had it with these unannounced peculiarities. It turns out that the specific implementation for LFSRs employed by this challenge discarded the first output bit. Thinking back to the competition, how was anyone expected to figure out this random quirk within 7 hours? Never mind the craze-filled vibe that filled the already cramped space as people ran about looking to get a decent LTE signal, or queueing for their 2 free team pizzas, all while another 50+ challenges also needed attention. Fun times :P</p>
+<p>Eventually it came down to guessing and trying out of the ordinary things. Sometimes you just gotta have time, patience and a decent CPU, along with a hearty meal and a YouTube playlist to distract you from the dreadful compiler errors. Rustc knows that I&rsquo;m kidding of course!</p>
+<p>After grieving over all the time I lost, and over the time I spent grieving, and then some&mldr; I eventually came to a <em>solución muy eficiente</em> and compiled it with Rust&rsquo;s superb optimisations. This resulted in code that brute forced over 2.1 billion combinations of bits in less than 30 seconds on my machine. Consistently.</p>
+<p><img src=lfsr-timing.png alt="Timed results"></p>
+<p>Pretty neat, huh? Here&rsquo;s the outcome:</p>
+<p><img src=lfsr.png alt=Flag></p>
+<a class=post-dummy-target id=whaa-whaa-just-give-me-the-code-already></a><h3>&ldquo;Whaa whaa just give me the code already&rdquo;</h3>
+<p>Alright ya godforsaken beggars, the solution in its full glory, also found on my GitHub page <a href=https://github.com/victorazzam/stash/tree/master/Challenges/ZeroDays%202019/Fast%20and%20Efficient>with the rest of the files</a>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
 </span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fs</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span>::<span class="n">prelude</span>::<span class="o">*</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">convert</span>::<span class="n">TryFrom</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">
-</span><span class="w"></span><span class="k">fn</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">done</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">// Set to 1 on successful decryption
-</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">png</span>: <span class="p">[</span><span class="kt">u8</span><span class="p">;</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mh">0x89</span><span class="p">,</span><span class="w"> </span><span class="mh">0x50</span><span class="p">,</span><span class="w"> </span><span class="mh">0x4E</span><span class="p">,</span><span class="w"> </span><span class="mh">0x47</span><span class="p">]</span><span class="p">;</span><span class="w"> </span><span class="c1">// PNG magic bytes
-</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="k">mut</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">value</span><span class="p">)</span>: <span class="p">(</span><span class="kt">u32</span><span class="p">,</span><span class="w"> </span><span class="kt">u8</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="p">;</span><span class="w"> </span><span class="c1">// Temporary vars
-</span><span class="c1"></span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="c1">// Set up registers with bit-length and mask
-</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">l1</span><span class="p">,</span><span class="w"> </span><span class="n">m1</span><span class="p">,</span><span class="w"> </span><span class="n">l2</span><span class="p">,</span><span class="w"> </span><span class="n">m2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mb">0b10000100000</span><span class="p">,</span><span class="w"> </span><span class="mi">19</span><span class="p">,</span><span class="w"> </span><span class="mb">0b100000100000000</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">r1</span>: <span class="nc">Reg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Reg</span>::<span class="n">new</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span><span class="w"> </span><span class="n">m1</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">r2</span>: <span class="nc">Reg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Reg</span>::<span class="n">new</span><span class="p">(</span><span class="n">l2</span><span class="p">,</span><span class="w"> </span><span class="n">m2</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">bytes</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Vec</span>::<span class="n">new</span><span class="p">(</span><span class="p">)</span><span class="p">;</span><span class="w"> </span><span class="c1">// Vector for decrypted data
-</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">enc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_encrypted_png</span><span class="p">(</span><span class="p">)</span><span class="p">;</span><span class="w"> </span><span class="c1">// Encrypted data as Vec&lt;u8&gt;
-</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">metadata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fs</span>::<span class="n">metadata</span><span class="p">(</span><span class="s">&#34;lfsr.png.enc&#34;</span><span class="p">)</span><span class="p">.</span><span class="n">unwrap</span><span class="p">(</span><span class="p">)</span><span class="p">;</span><span class="w"> </span><span class="c1">// Total bytes to
-</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">usize</span>::<span class="n">try_from</span><span class="p">(</span><span class="n">metadata</span><span class="p">.</span><span class="n">len</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="p">.</span><span class="n">unwrap</span><span class="p">(</span><span class="p">)</span><span class="p">;</span><span class="w">   </span><span class="c1">// be decrypted
-</span><span class="c1"></span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">r1</span><span class="p">.</span><span class="n">tap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">.</span><span class="p">.</span><span class="mi">1</span><span class="o">&lt;</span><span class="o">&lt;</span><span class="n">l1</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="c1">//print!(&#34;\r{}&#34;, i);
-</span><span class="c1"></span><span class="w">        </span><span class="c1">//io::stdout().flush().expect(&#34;Could not flush stdout!&#34;);
-</span><span class="c1"></span><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">tap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">.</span><span class="p">.</span><span class="mi">1</span><span class="o">&lt;</span><span class="o">&lt;</span><span class="n">l2</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">            </span><span class="n">r1</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">            </span><span class="n">r2</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="n">level</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="p">.</span><span class="n">len</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="p">.</span><span class="mi">8</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">                    </span><span class="n">res</span><span class="w"> </span><span class="o">+</span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;</span><span class="o">&lt;</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">next</span><span class="p">(</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">next</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="n">res</span><span class="w"> </span><span class="o">%</span><span class="o">=</span><span class="w"> </span><span class="mi">255</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="c1">//println!(&#34;Expected {} got {}&#34;, png[level] ^ enc[level], res);
-</span><span class="c1"></span><span class="w">                </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">u8</span>::<span class="n">try_from</span><span class="p">(</span><span class="n">res</span><span class="p">)</span><span class="p">.</span><span class="n">unwrap</span><span class="p">(</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">level</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&amp;</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="n">enc</span><span class="p">[</span><span class="n">level</span><span class="p">]</span><span class="w"> </span><span class="o">!</span><span class="o">=</span><span class="w"> </span><span class="n">png</span><span class="p">[</span><span class="n">level</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">                    </span><span class="k">break</span><span class="w"></span><span class="nl"></span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">level</span><span class="w"> </span><span class="o">=</span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">                    </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">.</span><span class="p">.</span><span class="mi">4</span><span class="p">}</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">                        </span><span class="n">bytes</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">png</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                    </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">                    </span><span class="n">done</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">level</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">                    </span><span class="n">bytes</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="n">enc</span><span class="p">[</span><span class="n">level</span><span class="p">]</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">            </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">done</span><span class="w"> </span><span class="o">=</span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="c1">//println!(&#34;\rSeeds: i, j = {}, {}&#34;, i, j);
-</span><span class="c1"></span><span class="w">                </span><span class="c1">// https://stackoverflow.com/a/30838655
-</span><span class="c1"></span><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">s</span>: <span class="kp">&amp;</span><span class="p">[</span><span class="kt">u8</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">                    </span><span class="n">std</span>::<span class="n">slice</span>::<span class="n">from_raw_parts</span><span class="p">(</span><span class="w">
-</span><span class="w"></span><span class="w">                        </span><span class="n">bytes</span><span class="p">.</span><span class="n">as_ptr</span><span class="p">(</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">const</span><span class="w"> </span><span class="kt">u8</span><span class="p">,</span><span class="w">
-</span><span class="w"></span><span class="w">                        </span><span class="n">bytes</span><span class="p">.</span><span class="n">len</span><span class="p">(</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">std</span>::<span class="n">mem</span>::<span class="n">size_of</span>::<span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;</span><span class="p">(</span><span class="p">)</span><span class="w">
-</span><span class="w"></span><span class="w">                    </span><span class="p">)</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="p">}</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fs</span>::<span class="n">File</span>::<span class="n">create</span><span class="p">(</span><span class="s">&#34;lfsr.png&#34;</span><span class="p">)</span><span class="p">.</span><span class="n">unwrap</span><span class="p">(</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="n">file</span><span class="p">.</span><span class="n">write_all</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="p">.</span><span class="n">unwrap</span><span class="p">(</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="k">break</span><span class="w"></span><span class="nl"></span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">            </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">done</span><span class="w"> </span><span class="o">=</span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">            </span><span class="k">break</span><span class="w"></span><span class="nl"></span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">
-</span><span class="w"></span><span class="c1">// https://stackoverflow.com/a/37189758
-</span><span class="c1"></span><span class="k">fn</span> <span class="nf">get_encrypted_png</span><span class="p">(</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fs</span>::<span class="n">File</span>::<span class="n">open</span><span class="p">(</span><span class="s">&#34;lfsr.png.enc&#34;</span><span class="p">)</span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&#34;Failed to open!&#34;</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">io</span>::<span class="n">BufReader</span>::<span class="n">new</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">buf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Vec</span>::<span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;</span>::<span class="n">new</span><span class="p">(</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">read_until</span><span class="p">(</span><span class="sc">b&#39;\n&#39;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">buf</span><span class="p">)</span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&#34;Failed to read!&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">!</span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="n">buf</span><span class="w">
-</span><span class="w"></span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">
-</span><span class="w"></span><span class="k">struct</span> <span class="nc">Reg</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="n">tap</span>: <span class="p">[</span><span class="kt">u32</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="p">,</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="n">length</span>: <span class="kt">usize</span><span class="p">,</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="n">value</span>: <span class="kt">u32</span><span class="p">,</span><span class="w">
-</span><span class="w"></span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">
-</span><span class="w"></span><span class="k">impl</span><span class="w"> </span><span class="n">Reg</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">length</span>: <span class="kt">usize</span><span class="p">,</span><span class="w"> </span><span class="n">mask</span>: <span class="kt">u32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Reg</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">tap</span>: <span class="p">[</span><span class="kt">u32</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mask</span><span class="w"> </span><span class="o">&gt;</span><span class="o">&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="n">tap</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">u32</span>::<span class="n">try_from</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="p">.</span><span class="n">unwrap</span><span class="p">(</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">                </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">            </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="n">Reg</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">tap</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">value</span>: <span class="mi">0</span><span class="w"> </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="k">fn</span> <span class="nf">view</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">.</span><span class="p">.</span><span class="bp">self</span><span class="p">.</span><span class="n">length</span><span class="p">}</span><span class="p">.</span><span class="n">rev</span><span class="p">(</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">            </span><span class="c1">//print!(&#34;{}&#34;, self.value &gt;&gt; i &amp; 1);
-</span><span class="c1"></span><span class="w">        </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="c1">//println!();
-</span><span class="c1"></span><span class="w">    </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="k">fn</span> <span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">u32</span> <span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">xor</span>: <span class="kt">u32</span> <span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">&gt;</span><span class="o">&gt;</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">tap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">&gt;</span><span class="o">&gt;</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">tap</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="p">)</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="c1">//let old: u32 = self.value &amp; 1;
-</span><span class="c1"></span><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">&gt;</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="p">(</span><span class="n">xor</span><span class="w"> </span><span class="o">&lt;</span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="p">)</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">//old
-</span><span class="c1"></span><span class="w">    </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="k">fn</span> <span class="nf">set</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">value</span>: <span class="kt">u32</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w"></span><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="p">}</span><span class="w">
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-rust data-lang=rust><span class=k>use</span><span class=w> </span><span class=n>std</span>::<span class=n>io</span><span class=p>;</span><span class=w>
+</span><span class=w></span><span class=k>use</span><span class=w> </span><span class=n>std</span>::<span class=n>fs</span><span class=p>;</span><span class=w>
+</span><span class=w></span><span class=k>use</span><span class=w> </span><span class=n>std</span>::<span class=n>io</span>::<span class=n>prelude</span>::<span class=o>*</span><span class=p>;</span><span class=w>
+</span><span class=w></span><span class=k>use</span><span class=w> </span><span class=n>std</span>::<span class=n>convert</span>::<span class=n>TryFrom</span><span class=p>;</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=k>fn</span> <span class=nf>main</span><span class=p>()</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=k>mut</span><span class=w> </span><span class=n>done</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=mi>0</span><span class=p>;</span><span class=w> </span><span class=c1>// Set to 1 on successful decryption
+</span><span class=c1></span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=n>png</span>: <span class=p>[</span><span class=kt>u8</span><span class=p>;</span><span class=mi>4</span><span class=p>]</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=p>[</span><span class=mh>0x89</span><span class=p>,</span><span class=w> </span><span class=mh>0x50</span><span class=p>,</span><span class=w> </span><span class=mh>0x4E</span><span class=p>,</span><span class=w> </span><span class=mh>0x47</span><span class=p>];</span><span class=w> </span><span class=c1>// PNG magic bytes
+</span><span class=c1></span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=p>(</span><span class=k>mut</span><span class=w> </span><span class=n>res</span><span class=p>,</span><span class=w> </span><span class=k>mut</span><span class=w> </span><span class=n>value</span><span class=p>)</span>: <span class=p>(</span><span class=kt>u32</span><span class=p>,</span><span class=w> </span><span class=kt>u8</span><span class=p>)</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=p>(</span><span class=mi>0</span><span class=p>,</span><span class=w> </span><span class=mi>0</span><span class=p>);</span><span class=w> </span><span class=c1>// Temporary vars
+</span><span class=c1></span><span class=w>
+</span><span class=w>    </span><span class=c1>// Set up registers with bit-length and mask
+</span><span class=c1></span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=p>(</span><span class=n>l1</span><span class=p>,</span><span class=w> </span><span class=n>m1</span><span class=p>,</span><span class=w> </span><span class=n>l2</span><span class=p>,</span><span class=w> </span><span class=n>m2</span><span class=p>)</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=p>(</span><span class=mi>12</span><span class=p>,</span><span class=w> </span><span class=mb>0b10000100000</span><span class=p>,</span><span class=w> </span><span class=mi>19</span><span class=p>,</span><span class=w> </span><span class=mb>0b100000100000000</span><span class=p>);</span><span class=w>
+</span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=k>mut</span><span class=w> </span><span class=n>r1</span>: <span class=nc>Reg</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Reg</span>::<span class=n>new</span><span class=p>(</span><span class=n>l1</span><span class=p>,</span><span class=w> </span><span class=n>m1</span><span class=p>);</span><span class=w>
+</span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=k>mut</span><span class=w> </span><span class=n>r2</span>: <span class=nc>Reg</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Reg</span>::<span class=n>new</span><span class=p>(</span><span class=n>l2</span><span class=p>,</span><span class=w> </span><span class=n>m2</span><span class=p>);</span><span class=w>
+</span><span class=w>
+</span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=k>mut</span><span class=w> </span><span class=n>bytes</span>: <span class=nb>Vec</span><span class=o>&lt;</span><span class=kt>u8</span><span class=o>&gt;</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>Vec</span>::<span class=n>new</span><span class=p>();</span><span class=w> </span><span class=c1>// Vector for decrypted data
+</span><span class=c1></span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=n>enc</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>get_encrypted_png</span><span class=p>();</span><span class=w> </span><span class=c1>// Encrypted data as Vec&lt;u8&gt;
+</span><span class=c1></span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=n>metadata</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>fs</span>::<span class=n>metadata</span><span class=p>(</span><span class=s>&#34;lfsr.png.enc&#34;</span><span class=p>).</span><span class=n>unwrap</span><span class=p>();</span><span class=w> </span><span class=c1>// Total bytes to
+</span><span class=c1></span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=n>len</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=kt>usize</span>::<span class=n>try_from</span><span class=p>(</span><span class=n>metadata</span><span class=p>.</span><span class=n>len</span><span class=p>()).</span><span class=n>unwrap</span><span class=p>();</span><span class=w>   </span><span class=c1>// be decrypted
+</span><span class=c1></span><span class=w>
+</span><span class=w>    </span><span class=k>for</span><span class=w> </span><span class=n>i</span><span class=w> </span><span class=k>in</span><span class=w> </span><span class=n>r1</span><span class=p>.</span><span class=n>tap</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=o>..</span><span class=mi>1</span><span class=o>&lt;&lt;</span><span class=n>l1</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>        </span><span class=c1>//print!(&#34;\r{}&#34;, i);
+</span><span class=c1></span><span class=w>        </span><span class=c1>//io::stdout().flush().expect(&#34;Could not flush stdout!&#34;);
+</span><span class=c1></span><span class=w>        </span><span class=k>for</span><span class=w> </span><span class=n>j</span><span class=w> </span><span class=k>in</span><span class=w> </span><span class=n>r2</span><span class=p>.</span><span class=n>tap</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=o>..</span><span class=mi>1</span><span class=o>&lt;&lt;</span><span class=n>l2</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>            </span><span class=n>r1</span><span class=p>.</span><span class=n>set</span><span class=p>(</span><span class=n>i</span><span class=p>);</span><span class=w>
+</span><span class=w>            </span><span class=n>r2</span><span class=p>.</span><span class=n>set</span><span class=p>(</span><span class=n>j</span><span class=p>);</span><span class=w>
+</span><span class=w>            </span><span class=k>for</span><span class=w> </span><span class=n>level</span><span class=w> </span><span class=k>in</span><span class=w> </span><span class=mi>0</span><span class=o>..</span><span class=n>len</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>                </span><span class=n>res</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=mi>0</span><span class=p>;</span><span class=w>
+</span><span class=w>                </span><span class=k>for</span><span class=w> </span><span class=n>k</span><span class=w> </span><span class=k>in</span><span class=w> </span><span class=mi>0</span><span class=o>..</span><span class=mi>8</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>                    </span><span class=n>res</span><span class=w> </span><span class=o>+=</span><span class=w> </span><span class=p>(</span><span class=mi>1</span><span class=w> </span><span class=o>&lt;&lt;</span><span class=w> </span><span class=n>k</span><span class=p>)</span><span class=w> </span><span class=o>*</span><span class=w> </span><span class=p>(</span><span class=n>r1</span><span class=p>.</span><span class=n>next</span><span class=p>()</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>r2</span><span class=p>.</span><span class=n>next</span><span class=p>());</span><span class=w>
+</span><span class=w>                </span><span class=p>}</span><span class=w>
+</span><span class=w>                </span><span class=n>res</span><span class=w> </span><span class=o>%=</span><span class=w> </span><span class=mi>255</span><span class=p>;</span><span class=w>
+</span><span class=w>                </span><span class=c1>//println!(&#34;Expected {} got {}&#34;, png[level] ^ enc[level], res);
+</span><span class=c1></span><span class=w>                </span><span class=n>value</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=kt>u8</span>::<span class=n>try_from</span><span class=p>(</span><span class=n>res</span><span class=p>).</span><span class=n>unwrap</span><span class=p>();</span><span class=w>
+</span><span class=w>                </span><span class=k>if</span><span class=w> </span><span class=n>level</span><span class=w> </span><span class=o>&lt;</span><span class=w> </span><span class=mi>4</span><span class=w> </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>value</span><span class=w> </span><span class=o>^</span><span class=w> </span><span class=n>enc</span><span class=p>[</span><span class=n>level</span><span class=p>]</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=n>png</span><span class=p>[</span><span class=n>level</span><span class=p>]</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>                    </span><span class=k>break</span><span class=p>;</span><span class=w>
+</span><span class=w>                </span><span class=p>}</span><span class=w>
+</span><span class=w>                </span><span class=k>if</span><span class=w> </span><span class=n>level</span><span class=w> </span><span class=o>==</span><span class=w> </span><span class=mi>3</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>                    </span><span class=k>for</span><span class=w> </span><span class=n>x</span><span class=w> </span><span class=k>in</span><span class=w> </span><span class=p>{</span><span class=mi>0</span><span class=o>..</span><span class=mi>4</span><span class=p>}</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>                        </span><span class=n>bytes</span><span class=p>.</span><span class=n>push</span><span class=p>(</span><span class=n>png</span><span class=p>[</span><span class=n>x</span><span class=p>]);</span><span class=w>
+</span><span class=w>                    </span><span class=p>}</span><span class=w>
+</span><span class=w>                    </span><span class=n>done</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=mi>1</span><span class=p>;</span><span class=w>
+</span><span class=w>                </span><span class=p>}</span><span class=w>
+</span><span class=w>                </span><span class=k>if</span><span class=w> </span><span class=n>level</span><span class=w> </span><span class=o>&gt;</span><span class=w> </span><span class=mi>3</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>                    </span><span class=n>bytes</span><span class=p>.</span><span class=n>push</span><span class=p>(</span><span class=n>value</span><span class=w> </span><span class=o>^</span><span class=w> </span><span class=n>enc</span><span class=p>[</span><span class=n>level</span><span class=p>]);</span><span class=w>
+</span><span class=w>                </span><span class=p>}</span><span class=w>
+</span><span class=w>            </span><span class=p>}</span><span class=w>
+</span><span class=w>            </span><span class=k>if</span><span class=w> </span><span class=n>done</span><span class=w> </span><span class=o>==</span><span class=w> </span><span class=mi>1</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>                </span><span class=c1>//println!(&#34;\rSeeds: i, j = {}, {}&#34;, i, j);
+</span><span class=c1></span><span class=w>                </span><span class=c1>// https://stackoverflow.com/a/30838655
+</span><span class=c1></span><span class=w>                </span><span class=kd>let</span><span class=w> </span><span class=n>s</span>: <span class=kp>&amp;</span><span class=p>[</span><span class=kt>u8</span><span class=p>]</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>unsafe</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>                    </span><span class=n>std</span>::<span class=n>slice</span>::<span class=n>from_raw_parts</span><span class=p>(</span><span class=w>
+</span><span class=w>                        </span><span class=n>bytes</span><span class=p>.</span><span class=n>as_ptr</span><span class=p>()</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=o>*</span><span class=k>const</span><span class=w> </span><span class=kt>u8</span><span class=p>,</span><span class=w>
+</span><span class=w>                        </span><span class=n>bytes</span><span class=p>.</span><span class=n>len</span><span class=p>()</span><span class=w> </span><span class=o>*</span><span class=w> </span><span class=n>std</span>::<span class=n>mem</span>::<span class=n>size_of</span>::<span class=o>&lt;</span><span class=kt>u8</span><span class=o>&gt;</span><span class=p>()</span><span class=w>
+</span><span class=w>                    </span><span class=p>)</span><span class=w>
+</span><span class=w>                </span><span class=p>};</span><span class=w>
+</span><span class=w>                </span><span class=kd>let</span><span class=w> </span><span class=k>mut</span><span class=w> </span><span class=n>file</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>fs</span>::<span class=n>File</span>::<span class=n>create</span><span class=p>(</span><span class=s>&#34;lfsr.png&#34;</span><span class=p>).</span><span class=n>unwrap</span><span class=p>();</span><span class=w>
+</span><span class=w>                </span><span class=n>file</span><span class=p>.</span><span class=n>write_all</span><span class=p>(</span><span class=n>s</span><span class=p>).</span><span class=n>unwrap</span><span class=p>();</span><span class=w>
+</span><span class=w>                </span><span class=k>break</span><span class=p>;</span><span class=w>
+</span><span class=w>            </span><span class=p>}</span><span class=w>
+</span><span class=w>        </span><span class=p>}</span><span class=w>
+</span><span class=w>        </span><span class=k>if</span><span class=w> </span><span class=n>done</span><span class=w> </span><span class=o>==</span><span class=w> </span><span class=mi>1</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>            </span><span class=k>break</span><span class=p>;</span><span class=w>
+</span><span class=w>        </span><span class=p>}</span><span class=w>
+</span><span class=w>    </span><span class=p>}</span><span class=w>
+</span><span class=w></span><span class=p>}</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=c1>// https://stackoverflow.com/a/37189758
+</span><span class=c1></span><span class=k>fn</span> <span class=nf>get_encrypted_png</span><span class=p>()</span><span class=w> </span>-&gt; <span class=nb>Vec</span><span class=o>&lt;</span><span class=kt>u8</span><span class=o>&gt;</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=n>file</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>fs</span>::<span class=n>File</span>::<span class=n>open</span><span class=p>(</span><span class=s>&#34;lfsr.png.enc&#34;</span><span class=p>).</span><span class=n>expect</span><span class=p>(</span><span class=s>&#34;Failed to open!&#34;</span><span class=p>);</span><span class=w>
+</span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=k>mut</span><span class=w> </span><span class=n>f</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>io</span>::<span class=n>BufReader</span>::<span class=n>new</span><span class=p>(</span><span class=n>file</span><span class=p>);</span><span class=w>
+</span><span class=w>    </span><span class=kd>let</span><span class=w> </span><span class=k>mut</span><span class=w> </span><span class=n>buf</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>Vec</span>::<span class=o>&lt;</span><span class=kt>u8</span><span class=o>&gt;</span>::<span class=n>new</span><span class=p>();</span><span class=w>
+</span><span class=w>    </span><span class=k>while</span><span class=w> </span><span class=n>f</span><span class=p>.</span><span class=n>read_until</span><span class=p>(</span><span class=sc>b&#39;\n&#39;</span><span class=p>,</span><span class=w> </span><span class=o>&amp;</span><span class=k>mut</span><span class=w> </span><span class=n>buf</span><span class=p>).</span><span class=n>expect</span><span class=p>(</span><span class=s>&#34;Failed to read!&#34;</span><span class=p>)</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=mi>0</span><span class=w> </span><span class=p>{}</span><span class=w>
+</span><span class=w>    </span><span class=n>buf</span><span class=w>
+</span><span class=w></span><span class=p>}</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=k>struct</span> <span class=nc>Reg</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>    </span><span class=n>tap</span>: <span class=p>[</span><span class=kt>u32</span><span class=p>;</span><span class=w> </span><span class=mi>2</span><span class=p>],</span><span class=w>
+</span><span class=w>    </span><span class=n>length</span>: <span class=kt>usize</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=n>value</span>: <span class=kt>u32</span><span class=p>,</span><span class=w>
+</span><span class=w></span><span class=p>}</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=k>impl</span><span class=w> </span><span class=n>Reg</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>    </span><span class=k>fn</span> <span class=nf>new</span><span class=p>(</span><span class=n>length</span>: <span class=kt>usize</span><span class=p>,</span><span class=w> </span><span class=n>mask</span>: <span class=kt>u32</span><span class=p>)</span><span class=w> </span>-&gt; <span class=nc>Reg</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>        </span><span class=kd>let</span><span class=w> </span><span class=k>mut</span><span class=w> </span><span class=n>tap</span>: <span class=p>[</span><span class=kt>u32</span><span class=p>;</span><span class=w> </span><span class=mi>2</span><span class=p>]</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=p>[</span><span class=mi>0</span><span class=p>,</span><span class=w> </span><span class=mi>0</span><span class=p>];</span><span class=w>
+</span><span class=w>        </span><span class=kd>let</span><span class=w> </span><span class=k>mut</span><span class=w> </span><span class=n>i</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=mi>0</span><span class=p>;</span><span class=w>
+</span><span class=w>        </span><span class=k>for</span><span class=w> </span><span class=n>x</span><span class=w> </span><span class=k>in</span><span class=w> </span><span class=mi>0</span><span class=o>..</span><span class=n>length</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>            </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>mask</span><span class=w> </span><span class=o>&gt;&gt;</span><span class=w> </span><span class=n>x</span><span class=w> </span><span class=o>&amp;</span><span class=w> </span><span class=mi>1</span><span class=p>)</span><span class=w> </span><span class=o>==</span><span class=w> </span><span class=mi>1</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>                </span><span class=n>tap</span><span class=p>[</span><span class=n>i</span><span class=p>]</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=kt>u32</span>::<span class=n>try_from</span><span class=p>(</span><span class=n>x</span><span class=p>).</span><span class=n>unwrap</span><span class=p>();</span><span class=w>
+</span><span class=w>                </span><span class=n>i</span><span class=w> </span><span class=o>+=</span><span class=w> </span><span class=mi>1</span><span class=p>;</span><span class=w>
+</span><span class=w>            </span><span class=p>}</span><span class=w>
+</span><span class=w>        </span><span class=p>}</span><span class=w>
+</span><span class=w>        </span><span class=n>Reg</span><span class=w> </span><span class=p>{</span><span class=w> </span><span class=n>tap</span><span class=p>,</span><span class=w> </span><span class=n>length</span><span class=p>,</span><span class=w> </span><span class=n>value</span>: <span class=mi>0</span><span class=w> </span><span class=p>}</span><span class=w>
+</span><span class=w>    </span><span class=p>}</span><span class=w>
+</span><span class=w>    </span><span class=k>fn</span> <span class=nf>view</span><span class=p>(</span><span class=o>&amp;</span><span class=bp>self</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>        </span><span class=k>for</span><span class=w> </span><span class=n>i</span><span class=w> </span><span class=k>in</span><span class=w> </span><span class=p>{</span><span class=mi>0</span><span class=o>..</span><span class=bp>self</span><span class=p>.</span><span class=n>length</span><span class=p>}.</span><span class=n>rev</span><span class=p>()</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>            </span><span class=c1>//print!(&#34;{}&#34;, self.value &gt;&gt; i &amp; 1);
+</span><span class=c1></span><span class=w>        </span><span class=p>}</span><span class=w>
+</span><span class=w>        </span><span class=c1>//println!();
+</span><span class=c1></span><span class=w>    </span><span class=p>}</span><span class=w>
+</span><span class=w>    </span><span class=k>fn</span> <span class=nf>next</span><span class=p>(</span><span class=o>&amp;</span><span class=k>mut</span><span class=w> </span><span class=bp>self</span><span class=p>)</span><span class=w> </span>-&gt; <span class=kt>u32</span> <span class=p>{</span><span class=w>
+</span><span class=w>        </span><span class=kd>let</span><span class=w> </span><span class=n>xor</span>: <span class=kt>u32</span> <span class=o>=</span><span class=w> </span><span class=p>((</span><span class=bp>self</span><span class=p>.</span><span class=n>value</span><span class=w> </span><span class=o>&gt;&gt;</span><span class=w> </span><span class=bp>self</span><span class=p>.</span><span class=n>tap</span><span class=p>[</span><span class=mi>0</span><span class=p>])</span><span class=w> </span><span class=o>^</span><span class=w> </span><span class=p>(</span><span class=bp>self</span><span class=p>.</span><span class=n>value</span><span class=w> </span><span class=o>&gt;&gt;</span><span class=w> </span><span class=bp>self</span><span class=p>.</span><span class=n>tap</span><span class=p>[</span><span class=mi>1</span><span class=p>]))</span><span class=w> </span><span class=o>&amp;</span><span class=w> </span><span class=mi>1</span><span class=p>;</span><span class=w>
+</span><span class=w>        </span><span class=c1>//let old: u32 = self.value &amp; 1;
+</span><span class=c1></span><span class=w>        </span><span class=bp>self</span><span class=p>.</span><span class=n>value</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=p>(</span><span class=bp>self</span><span class=p>.</span><span class=n>value</span><span class=w> </span><span class=o>&gt;&gt;</span><span class=w> </span><span class=mi>1</span><span class=p>)</span><span class=w> </span><span class=o>^</span><span class=w> </span><span class=p>(</span><span class=n>xor</span><span class=w> </span><span class=o>&lt;&lt;</span><span class=w> </span><span class=p>(</span><span class=bp>self</span><span class=p>.</span><span class=n>length</span><span class=w> </span><span class=o>-</span><span class=w> </span><span class=mi>1</span><span class=p>));</span><span class=w>
+</span><span class=w>        </span><span class=bp>self</span><span class=p>.</span><span class=n>value</span><span class=w> </span><span class=o>&amp;</span><span class=w> </span><span class=mi>1</span><span class=w> </span><span class=c1>//old
+</span><span class=c1></span><span class=w>    </span><span class=p>}</span><span class=w>
+</span><span class=w>    </span><span class=k>fn</span> <span class=nf>set</span><span class=p>(</span><span class=o>&amp;</span><span class=k>mut</span><span class=w> </span><span class=bp>self</span><span class=p>,</span><span class=w> </span><span class=n>value</span>: <span class=kt>u32</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span><span class=w>        </span><span class=bp>self</span><span class=p>.</span><span class=n>value</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>value</span><span class=p>;</span><span class=w>
+</span><span class=w>    </span><span class=p>}</span><span class=w>
+</span><span class=w></span><span class=p>}</span><span class=w>
 </span></code></pre></td></tr></table>
 </div>
-</div><a class="post-dummy-target" id="conclusion"></a><h2>Conclusion</h2>
+</div><a class=post-dummy-target id=conclusion></a><h2>Conclusion</h2>
 <p>It werks. Donut touch it. Also a special thanks to stackoverflow and my insomnia.</p>
-
-        </div>
-
-        <div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>Last updated: 2020-01-22</span>
-            </div>
-            <div class="post-info-license">
-                
-            </div>
-        </div>
-        <div class="post-info-line">
-            <div class="post-info-md">
-                
-            </div>
-            <div class="post-info-share">
-                
-                    <span>
-    
-        <a href="//twitter.com/share?url=https%3a%2f%2fwftc.xyz%2f2020%2f01%2fcrypto-rust%2f&amp;text=Solving%20a%20cryptographic%20challenge%20in%20Rust&amp;via=" target="_blank" title="Share on Twitter">
-            <i class="fab fa-twitter fa-fw"></i>
-        </a>
-    
-    
-        <a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwftc.xyz%2f2020%2f01%2fcrypto-rust%2f" target="_blank" title="Share on Facebook">
-            <i class="fab fa-facebook-square fa-fw"></i>
-        </a>
-    
-    
-        <a href="//reddit.com/submit?url=https%3a%2f%2fwftc.xyz%2f2020%2f01%2fcrypto-rust%2f&amp;title=Solving%20a%20cryptographic%20challenge%20in%20Rust" target="_blank" title="Share on Reddit">
-            <i class="fab fa-reddit fa-fw"></i>
-        </a>
-    
-    
-        <a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fwftc.xyz%2f2020%2f01%2fcrypto-rust%2f&amp;title=Solving%20a%20cryptographic%20challenge%20in%20Rust" target="_blank" title="Share on LinkedIn">
-            <i class="fab fa-linkedin fa-fw"></i>
-        </a>
-    
-    
-    
-    
-    
-    
-    
+</div>
+<div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>Last updated: 2020-01-22</span>
+</div>
+<div class=post-info-license>
+</div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md>
+</div>
+<div class=post-info-share>
+<span>
+<a href="//twitter.com/share?url=https%3a%2f%2fwftc.xyz%2f2020%2f01%2fcrypto-rust%2f&text=Solving%20a%20cryptographic%20challenge%20in%20Rust&via=" target=_blank title="Share on Twitter">
+<i class="fab fa-twitter fa-fw"></i>
+</a>
+<a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwftc.xyz%2f2020%2f01%2fcrypto-rust%2f" target=_blank title="Share on Facebook">
+<i class="fab fa-facebook-square fa-fw"></i>
+</a>
+<a href="//reddit.com/submit?url=https%3a%2f%2fwftc.xyz%2f2020%2f01%2fcrypto-rust%2f&title=Solving%20a%20cryptographic%20challenge%20in%20Rust" target=_blank title="Share on Reddit">
+<i class="fab fa-reddit fa-fw"></i>
+</a>
+<a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fwftc.xyz%2f2020%2f01%2fcrypto-rust%2f&title=Solving%20a%20cryptographic%20challenge%20in%20Rust" target=_blank title="Share on LinkedIn">
+<i class="fab fa-linkedin fa-fw"></i>
+</a>
 </span>
-                
-            </div>
-        </div>
-    </div>
-
-    <div class="post-info-more">
-        <section>
-            
-        </section>
-        <section>
-            <span><a href="javascript:window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="https://wftc.xyz">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-            <a href="https://wftc.xyz/2020/01/init.d/" class="prev" rel="prev" title="Do not click!!1"><i class="fas fa-angle-left fa-fw"></i>Do not click!!1</a>
-        
-        
-    </div>
 </div>
-
-        <div class="post-comment">
-            
-            
-
-            
-        </div>
-    </article></div>
-            </main>
-            <footer class="footer">
-    <div class="copyright">
-        <div class="copyright-line">
-            Built with <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a>&nbsp;|&nbsp;Theme: <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="external nofollow noopener noreffer">LoveIt<i class="far fa-heart fa-fw"></i></a>
-        </div>
-        <div class="copyright-line">
-            <i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wftc.xyz">Victor Azzam</a></span><span class="license">&nbsp;|&nbsp;<a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0" target="_blank">T&amp;C</a></span></div>
-    </div>
+</div>
+</div>
+<div class=post-info-more>
+<section>
+</section>
+<section>
+<span><a href=javascript:window.history.back();>Back</a></span>&nbsp;|&nbsp;<span><a href=https://wftc.xyz>Home</a></span>
+</section>
+</div>
+<div class=post-nav>
+<a href=https://wftc.xyz/2020/01/init.d/ class=prev rel=prev title="Do not click!!1"><i class="fas fa-angle-left fa-fw"></i>Do not click!!1</a>
+</div>
+</div>
+<div class=post-comment>
+</div>
+</article></div>
+</main>
+<footer class=footer>
+<div class=copyright>
+<div class=copyright-line>
+Built with <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a>&nbsp;|&nbsp;Theme: <a href=https://github.com/dillonzq/LoveIt target=_blank rel="external nofollow noopener noreffer">LoveIt<i class="far fa-heart fa-fw"></i></a>
+</div>
+<div class=copyright-line>
+<i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2020 - 2021</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://wftc.xyz>Victor Azzam</a></span><span class=license>&nbsp;|&nbsp;<a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0 target=_blank>T&C</a></span></div>
+</div>
 </footer>
-
-
-    
-    
-
-
-
-
-    
-    
-
-
-
-
-    
-    
-
-
-
-
-
-    
-    
-
-
-
-    
-    
-
-
-
-    
-    
-
-
-
-
-
-    
-    
-
-
-
-
-
-    
-    
-
-
-
-    
-    
-
-
-
-
-
-    
-    
-
-
-
-
-    
-    
-
-
-
-
-    
-    
-
-
-
-    
-    
-
-
-
-
-
-    
-    
-
-
-<script src="/js/lib/jquery/jquery.slim.min.min.js"></script>
-<script src="/js/lib/lazysizes/lazysizes.min.min.js"></script>
-<script src="/js/lib/smooth-scroll/smooth-scroll.polyfills.min.min.js"></script><script>window.scroll = new SmoothScroll('[data-scroll]', {speed: 300, speedAsDuration: true});</script>
-
-
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-
-
-
-
-
-<script src="/js/blog.min.js"></script>
-
-
-    
+<script src=/js/lib/jquery/jquery.slim.min.min.js></script>
+<script src=/js/lib/lazysizes/lazysizes.min.min.js></script>
+<script src=/js/lib/smooth-scroll/smooth-scroll.polyfills.min.min.js></script><script>window.scroll=new SmoothScroll('[data-scroll]',{speed:300,speedAsDuration:!0})</script>
+<script src=/js/blog.min.js></script>
 </div>
-        <a href="#" class="dynamic-to-top" id="dynamic-to-top" data-scroll><span>&nbsp;</span></a>
-    </body>
+<a href=# class=dynamic-to-top id=dynamic-to-top data-scroll><span>&nbsp;</span></a>
+</body>
 </html>
